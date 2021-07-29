@@ -1,0 +1,566 @@
+openapi: 3.0.0
+info:
+  description:
+    "This is a sample server Twitter Clone server.  You can find out more
+    about     Swagger at [http://swagger.io](http://swagger.io) or on
+    [irc.freenode.net, #swagger](http://swagger.io/irc/)."
+  version: 1.0.0
+  title: Swagger Twitter Clone
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: sato-hironori@dmm.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:8080/v1
+  - url: http://localhost:4010/v1
+  - url: http://ec2-13-231-224-188.ap-northeast-1.compute.amazonaws.com:8080/v1
+tags:
+  - name: health
+    description: Endpoint for healthchecks
+  - name: accounts
+    description: Everything about Accounts
+    externalDocs:
+      description: Find out more
+      url: http://example.com
+  - name: media
+    description: Everything about Media
+    externalDocs:
+      description: Find out more
+      url: http://example.com
+  - name: statuses
+    description: Everything about Statuses
+    externalDocs:
+      description: Find out more
+      url: http://example.com
+  - name: timelines
+    description: Everything about Timelines
+    externalDocs:
+      description: Find out more
+      url: http://example.com
+paths:
+  /health:
+    head:
+      tags:
+        - health
+      summary: Endpoint for healthchecks
+      description: ""
+      operationId: headHealth
+      responses:
+        "200":
+          description: OK
+    get:
+      tags:
+        - health
+      summary: Endpoint for healthchecks
+      description: ""
+      operationId: getHealth
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+  /accounts:
+    post:
+      tags:
+        - accounts
+      summary: Creating an account
+      description: ""
+      operationId: addAcount
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: john
+                  description: The username of the account
+                password:
+                  type: string
+                  example: P@ssw0rd
+                  description: Password of user
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+  /accounts/update_credentials:
+    post:
+      security:
+      - Auth: []
+      tags:
+        - accounts
+      summary: Updating an account
+      description: ""
+      operationId: updateAccount
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                display_name:
+                  description: "The name to display in the user's profile  "
+                  type: string
+                note:
+                  description: A new biography for the user
+                  type: string
+                avatar:
+                  description: An avatar for the user (encoded using multipart/form-data)
+                  type: string
+                  format: binary
+                header:
+                  description: A header image for the user (encoded using
+                    multipart/form-data)
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+  "/accounts/{username}":
+    get:
+      tags:
+        - accounts
+      summary: Fetching an account
+      description: ""
+      operationId: findAccountByID
+      parameters:
+        - name: username
+          in: path
+          description: Username of account to return
+          required: true
+          example: john
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+  "/accounts/{username}/follow":
+    post:
+      security:
+      - Auth: []
+      tags:
+        - accounts
+      summary: Following an account
+      description: ""
+      operationId: followAcount
+      parameters:
+        - name: username
+          in: path
+          description: Username of account to follow
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+  "/accounts/{username}/following":
+    get:
+      tags:
+        - accounts
+      summary: Getting who account is following
+      description: ""
+      operationId: findFollowing
+      parameters:
+        - name: username
+          in: path
+          description: Username of account to follow
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Maximum number of followings to get (Default 40, Max 80)
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+  "/accounts/{username}/followers":
+    get:
+      tags:
+        - accounts
+      summary: Getting an account's followers
+      description: ""
+      operationId: findFollowers
+      parameters:
+        - name: username
+          in: path
+          description: Username of account to follow
+          required: true
+          schema:
+            type: string
+        - name: max_id
+          in: query
+          description: Get a list of followings with ID less than this value
+          required: false
+          schema:
+            type: integer
+        - name: since_id
+          in: query
+          description: Get a list of followings with ID greater than this value
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: Maximum number of followings to get (Default 40, Max 80)
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
+  "/accounts/{username}/unfollow":
+    post:
+      security:
+      - Auth: []
+      tags:
+        - accounts
+      summary: Unfollowing an account
+      description: ""
+      operationId: unfollowAccount
+      parameters:
+        - name: username
+          in: path
+          description: Username of account to follow
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Relationship"
+  /accounts/relationships:
+    get:
+      security:
+      - Auth: []
+      tags:
+        - accounts
+      summary: Getting an account's relationships
+      description: ""
+      operationId: findRelationships
+      parameters:
+        - name: username
+          in: query
+          description: Account Usernames (Username Must be Separated by Comma)
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Relationship"
+  /media:
+    post:
+      tags:
+        - media
+      summary: Uploading a media attachment
+      description: ""
+      operationId: addMedia
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  description: Media to be uploaded (encoded using multipart/form-data)
+                  type: string
+                  format: binary
+                description:
+                  description:
+                    A plain-text description of the media, for accessibility
+                    (max 420 chars)
+                  type: string
+              required:
+                - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Attachment"
+  /statuses:
+    post:
+      security:
+      - Auth: []
+      tags:
+        - statuses
+      summary: Posting a new status
+      description: ""
+      operationId: addStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: ピタ ゴラ スイッチ♪
+                  description: The text of the status
+                media_ids:
+                  type: array
+                  items:
+                    type: integer
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+  "/statuses/{id}":
+    get:
+      tags:
+        - statuses
+      summary: Fetching an status
+      description: ""
+      operationId: findStatusByID
+      parameters:
+        - name: id
+          in: path
+          description: ID of Status to return
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Status"
+    delete:
+      security:
+      - Auth: []
+      tags:
+        - statuses
+      summary: Deleting a status
+      description: ""
+      operationId: deleteStatus
+      parameters:
+        - name: id
+          in: path
+          description: ID of Status to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /timelines/home:
+    get:
+      security:
+      - Auth: []
+      tags:
+        - timelines
+      summary: Retrieving a timeline
+      description: ""
+      operationId: findHomeTimelines
+      parameters:
+        - &a1
+          name: only_media
+          in: query
+          description:
+            Only return statuses that have media attachments (public and tag
+            timelines only)
+          required: false
+          schema:
+            type: integer
+        - &a2
+          name: max_id
+          in: query
+          description: Get a list of followings with ID less than this value
+          required: false
+          schema:
+            type: integer
+        - &a3
+          name: since_id
+          in: query
+          description: Get a list of followings with ID greater than this value
+          required: false
+          schema:
+            type: integer
+        - &a4
+          name: limit
+          in: query
+          description: Maximum number of followings to get (Default 40, Max 80)
+          required: false
+          schema:
+            type: integer
+      responses: &a5
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Status"
+  /timelines/public:
+    get:
+      tags:
+        - timelines
+      summary: Retrieving a timeline
+      description: ""
+      operationId: findPublicTimelines
+      parameters:
+        - *a1
+        - *a2
+        - *a3
+        - *a4
+      responses: *a5
+externalDocs:
+  description: Find out more about Swagger
+  url: http://example.com
+components:
+  securitySchemes:
+    Auth:
+      type: apiKey
+      name: Authentication
+      in: header
+  schemas:
+    Account:
+      type: object
+      properties:
+        username:
+          type: string
+          description: The username of the account
+          example: john
+        display_name:
+          type: string
+          description: The account's display name
+          example: ジョン
+        create_at:
+          type: string
+          format: date-time
+          description: The time the account was created
+        followers_count:
+          type: integer
+          description: The number of followers for the account
+          example: 52
+        following_count:
+          type: integer
+          description: The number of accounts the given account is following
+          example: 128
+        note:
+          type: string
+          description: Biography of user
+        url:
+          type: string
+          description: URL of the user's profile page (can be remote)
+        avatar:
+          type: string
+          description: URL to the avatar image
+        header:
+          type: string
+          description: URL to the header image
+    Relationship:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Target account id
+        following:
+          type: boolean
+          description: Whether the user is currently following the account
+        followed_by:
+          type: boolean
+          description: Whether the user is currently being followed by the account
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: ID of the attachment
+          example: 123
+        type:
+          type: string
+          description: 'One of: "image", "video", "gifv", "unknown"'
+          example: "image"
+        url:
+          type: string
+          description: "URL of the locally hosted version of the image "
+        remote_url:
+          type: string
+          description: For remote images, the remote URL of the original image
+        preview_url:
+          type: string
+          description: URL of the preview image
+        description:
+          type: string
+          description: A description of the image for the visually impaired (maximum 420 characters), or `null` if none provided
+    Status:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The ID of the status
+          example: 123
+        url:
+          type: string
+          description: URL to the status page (can be remote)
+        account:
+          $ref: "#/components/schemas/Account"
+        content:
+          type: string
+          description: Body of the status; this will contain HTML (remote HTML already sanitized)
+          example: ピタ ゴラ スイッチ♪
+        create_at:
+          type: string
+          format: date-time
+          description: The time the status was created
+        media_attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"

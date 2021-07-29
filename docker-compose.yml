@@ -40,3 +40,12 @@ services:
     depends_on:
       - mysql
     restart: on-failure
+
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./openapi.yml:/data/openapi.yml
+    environment:
+      SWAGGER_JSON: /data/openapi.yml
