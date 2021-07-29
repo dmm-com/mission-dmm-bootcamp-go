@@ -1,0 +1,42 @@
+version: '3.7'
+services:
+  mysql:
+    image: mysql:5.7
+    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --default-time-zone='+9:00'"
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: yatter
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+      MYSQL_USER: yatter
+      MYSQL_PASSWORD: yatter
+    volumes:
+      - "./.data/mysql:/var/lib/mysql"
+      - "./ddl:/docker-entrypoint-initdb.d"
+    restart: on-failure
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    working_dir: "/work/yatter-backend-go"
+    command: ["air"]
+    volumes:
+      - ".:/work/yatter-backend-go"
+      - "./.data/go-pkg:/go/pkg/mod/cache"
+    ports:
+      - "8080:8080"
+    env_file:
+      - docker-compose-default.env
+    depends_on:
+      - mysql
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    depends_on:
+      - mysql
+    restart: on-failure
