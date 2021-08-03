@@ -34,9 +34,6 @@ type (
 		// Biography of user
 		Note *string `json:"note,omitempty"`
 
-		// URL of the user's profile page (can be remote)
-		URL *string `json:"url,omitempty"`
-
 		// The time the account was created
 		CreateAt DateTime `json:"create_at,omitempty" db:"create_at"`
 	}

@@ -6,16 +6,12 @@ info:
     [irc.freenode.net, #swagger](http://swagger.io/irc/)."
   version: 1.0.0
   title: Swagger Twitter Clone
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: sato-hironori@dmm.com
+  contact: {}
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 servers:
   - url: http://localhost:8080/v1
-  - url: http://localhost:4010/v1
-  - url: http://ec2-13-231-224-188.ap-northeast-1.compute.amazonaws.com:8080/v1
 tags:
   - name: health
     description: Endpoint for healthchecks
@@ -496,9 +492,6 @@ components:
         note:
           type: string
           description: Biography of user
-        url:
-          type: string
-          description: URL of the user's profile page (can be remote)
         avatar:
           type: string
           description: URL to the avatar image
@@ -530,13 +523,7 @@ components:
           example: "image"
         url:
           type: string
-          description: "URL of the locally hosted version of the image "
-        remote_url:
-          type: string
-          description: For remote images, the remote URL of the original image
-        preview_url:
-          type: string
-          description: URL of the preview image
+          description: URL of the image
         description:
           type: string
           description: A description of the image for the visually impaired (maximum 420 characters), or `null` if none provided
@@ -547,9 +534,6 @@ components:
           type: integer
           description: The ID of the status
           example: 123
-        url:
-          type: string
-          description: URL to the status page (can be remote)
         account:
           $ref: "#/components/schemas/Account"
         content:
