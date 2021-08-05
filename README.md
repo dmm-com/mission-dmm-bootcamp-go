@@ -39,6 +39,7 @@ TechBowl社MISSION用テンプレートリポジトリ(新卒研修-Go)
 開発環境をdocker-composeで構築しています。
 
 ### Requirements
+* Go
 * docker / docker-compose
 
 ### Start
