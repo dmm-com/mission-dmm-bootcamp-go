@@ -14,8 +14,9 @@ TechBowl社MISSION用Templateリポジトリ(新卒研修-Go)
 	* [DB](#db)
 * [Code](#code)
     * [Architecture](#architecture)
-	* [Library](#library)
-	* [Utilities](#utilities)
+    * [Module Dependency](#module-dependency)
+    * [Library](#library)
+    * [Utilities](#utilities)
 
 ## Mission
 このMISSIONではDMMのGo新卒研修の演習課題を体験していただきます。
@@ -107,8 +108,6 @@ docker-compose up -d # 再起動
 └── ddl      ----> DB definition master
 ```
 
-![モジュールの依存関係](doc/module_dependency.png)
-
 #### app
 モジュールの依存関係を整理するパッケージで、DIコンテナを扱います。
 今回は簡素なものになっていて、DAOの組み立てとhandlerのDAO（が提供するdomain/repository）への依存の管理のみ行っています。
@@ -135,6 +134,9 @@ HTTPリクエストのハンドラを実装するパッケージです。
 #### dao
 domain/repositoryに対する実装を提供するパッケージです。
 DBなど外部モジュールへアクセスし、データの保存・取得・更新などの処理を実装します。
+
+### Module Dependency
+![モジュールの依存関係](doc/module_dependency.png)
 
 ### Library
 * HTTP
