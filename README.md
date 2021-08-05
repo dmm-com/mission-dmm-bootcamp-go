@@ -1,5 +1,5 @@
 # mission-dmm-bootcamp-go
-TechBowl社MISSION用Templateリポジトリ(新卒研修-Go)
+TechBowl社MISSION用テンプレートリポジトリ(新卒研修-Go)
 
 ## Table of Contents
 * [Mission](#mission)
